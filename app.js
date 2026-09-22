@@ -128,7 +128,12 @@ async function main() {
   MEMS = d.allMemories || [];
   renderTimeline();
   wireTimeline();
-  renderRank(3650);
+
+  // ?w=45 deep-links a slider state — handy for screenshots and for jumping
+  // straight to the punchline mid-demo.
+  const w0 = Math.min(3650, Math.max(10, Number(new URLSearchParams(location.search).get("w")) || 3650));
+  $("window").value = w0;
+  renderRank(w0);
 
   $("captured").textContent = new Date(d.capturedAt).toLocaleString(undefined,
     { dateStyle: "medium", timeStyle: "short" });

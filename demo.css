@@ -1,5 +1,8 @@
 /* Travel Companion — interactive demo, layered on styles.css tokens */
 
+/* [hidden] must beat our own display:flex/grid rules */
+[hidden] { display: none !important; }
+
 .demo-body { background: var(--paper); }
 
 .load-error {
