@@ -16,6 +16,7 @@ PY=".venv/bin/python"
 case "${1:-}" in
   smoke)    shift; exec "$PY" scripts/smoke.py "$@" ;;
   snapshot) shift; exec "$PY" scripts/snapshot.py "$@" ;;
+  record)   shift; exec "$PY" scripts/record.py "$@" ;;
   ask)      shift; exec "$PY" -m travel_companion.agent "$@" ;;
   ingest)   shift; exec "$PY" -m travel_companion.ingest "$@" ;;
   *)        exec "$PY" compare.py "$@" ;;
