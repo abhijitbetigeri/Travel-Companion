@@ -3,16 +3,20 @@
 ## The claim
 
 An agent that remembers everything and weights it all equally will confidently
-act on preferences you abandoned months ago. **Supersession is a retrieval
-problem, not a storage problem** — nothing here is deleted or edited, the stale
-memory is still in the graph, it just loses.
+act on preferences you abandoned months ago.
 
-The same bug shows up twice, and this system fixes both with one idea:
+> **Supersession is a retrieval problem, not a storage problem.**
+> Nothing is deleted or edited. The stale memory is still in the graph — it
+> just loses.
 
-| Where | The bug |
+The same bug appears twice, and one idea fixes both:
+
+| Where | The failure |
 |---|---|
 | Personal memory | A 330-day-old "walk 20k steps a day" outranks a 45-day-old knee injury |
-| World memory | A three-week-old scraped opening time is cited as present fact |
+| World memory | A three-week-old scraped opening time gets cited as present fact |
+
+---
 
 ## Topology
 
@@ -20,69 +24,120 @@ Both external services are reached over HTTPS. Nothing runs locally except the
 agent process.
 
 ```
-                 ┌──────────────────────────────┐
-                 │  Bright Data (hosted MCP)    │
-                 │  mcp.brightdata.com/mcp      │
-                 │  search_engine, scrape_*     │
-                 └──────────────┬───────────────┘
-                                │ streamable HTTP
-                                ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │  Strands Agent                                          │
-  │  model: Anthropic (Bedrock wired, acct not enabled)     │
-  │  tools: Bright Data MCP  +  recall_self                 │
-  │                             recall_world                │
-  │                             remember                    │
-  └──────────────┬──────────────────────────────────────────┘
-                 │ REST + X-Api-Key
-                 ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │  Cognee (hosted tenant)   tenant-a394e3e6….aws.cognee.ai│
-  │                                                         │
-  │   dataset: self            dataset: world               │
-  │   durable, supersedable    volatile, expires fast       │
-  │   CHUNKS + decay.py        + freshness gate             │
-  └─────────────────────────────────────────────────────────┘
+        ┌───────────────────────────────────┐
+        │  Bright Data — hosted MCP server  │
+        │  mcp.brightdata.com/mcp           │
+        │  search_engine · scrape_as_markdown
+        │  search_engine_batch · scrape_batch
+        └─────────────────┬─────────────────┘
+                          │ streamable HTTP
+                          ▼
+  ┌───────────────────────────────────────────────────┐
+  │  Strands Agent                        agent.py    │
+  │                                                   │
+  │  model    BedrockModel | AnthropicModel           │
+  │  tools    Bright Data MCP tools                   │
+  │           + recall_self   ─┐                      │
+  │           + recall_world   │  tools.py            │
+  │           + remember      ─┘                      │
+  └───────────────────────┬───────────────────────────┘
+                          │
+              ┌───────────┴───────────┐
+              │                       │
+              ▼                       ▼
+     ┌─────────────────┐   ┌───────────────────────┐
+     │  decay.py       │   │  cognee_client.py     │
+     │  recency        │──▶│  REST + X-Api-Key     │
+     │  re-ranking     │   └───────────┬───────────┘
+     └─────────────────┘               │
+                                       ▼
+  ┌───────────────────────────────────────────────────┐
+  │  Cognee — hosted tenant                           │
+  │                                                   │
+  │   dataset: self          dataset: world           │
+  │   durable                volatile                 │
+  │   supersedable           expires in hours         │
+  │   recency-ranked         freshness-gated          │
+  │                                                   │
+  │   187 nodes · 702 edges, built by cognify         │
+  └───────────────────────────────────────────────────┘
 ```
 
 The tenant is **REST-only** — `/mcp`, `/api/v1/mcp` and `/sse` all 404. Cognee
-is wrapped as Strands `@tool` functions in `travel_companion/tools.py`. That
-turned out to be the better path anyway: wrapping REST directly is what gives
-per-call control of `datasets` and `searchType`, which is exactly what the
-ranking layer below needs.
+is wrapped as Strands `@tool` functions rather than consumed as MCP. That turned
+out better anyway: wrapping REST directly gives per-call control of `datasets`
+and `searchType`, which the ranking layer needs.
 
-## Where the decay actually lives
+---
 
-**Cognee stores the timeline; it does not rank by it.** This was measured, not
-assumed — and it is the single most important thing to understand about this
-build.
+## The four layers
 
-Cognify does its half correctly. The graph comes back with dates and
-supersession relationships intact:
+### 1 · Ingest — `ingest.py`
+
+Fifteen memories in `data/self_memory.json`, each with a relative `ageDays`.
+Ingest renders every one as a **dated sentence**:
+
+```
+On 2025-10-26, the traveler recorded a decision: Walk the entire city — no
+transit, 20k steps a day.
+[body]
+Tags: mobility, walking, routing.
+This was recorded 330 days ago.
+```
+
+**Why prose and not a field.** Cognee extracts timestamps *out of the text* to
+build event nodes joined by before/after/during edges. A JSON key named
+`ageDays` is invisible to it.
+
+This rendering is load-bearing twice — cognify's temporal extraction reads it,
+and `decay.py`'s `ENTRY_RE` parses chunks back into individual memories by
+matching exactly this shape. Change the wording and retrieval silently returns
+zero memories.
+
+### 2 · Storage — Cognee
+
+```
+POST /api/v1/datasets/    create `self` and `world`
+POST /api/v1/add_text     stage the dated prose
+POST /api/v1/cognify      build the graph  ← the slow, billed call
+POST /api/v1/recall       retrieve, scoped by dataset + searchType
+GET  /api/v1/visualize    standalone graph viewer (see graph.html)
+```
+
+Cognify does its half correctly. Dates *and* supersession language land in the
+graph as real structure:
 
 ```
 On 2026-08-08 … knee injury … supersedes the former "walk-everywhere" decision
 On 2026-08-18 … Skip ticketed attractions … The advance-booking decision is superseded.
 ```
 
-But `SearchType.TEMPORAL` answers explicit time-range questions ("what happened
-before 2000?"). It does not down-weight a stale preference in a general query.
-Asked to plan a day, `TEMPORAL` and `GRAPH_COMPLETION` returned near-identical
-itineraries — both routing through Alcatraz, both anchored on SFMOMA, one of
-them explicitly chasing the 20,000-step goal and booking The Fillmore until
-10pm. Every one of those is a decision the traveler reversed.
+### 3 · Ranking — `decay.py` ← the contribution
 
-So the ranking lives in `decay.py`, over Cognee's retrieval:
+**Cognee stores the timeline; it does not rank by it.** Measured, not assumed.
+
+`SearchType.TEMPORAL` answers explicit range questions ("what happened before
+2000?"). It does not down-weight a stale preference in a general query. Asked
+to plan a day, `TEMPORAL` and `GRAPH_COMPLETION` returned near-identical
+itineraries — both via Alcatraz, both anchored on SFMOMA, one explicitly
+chasing the 20,000-step goal and booking The Fillmore until 10pm. All four are
+decisions the traveler reversed.
+
+So the ranking sits on top of Cognee's retrieval:
 
 ```
-final_score = relevance * exp(-age_days / window_days)
+score = relevance × exp(−age_days / window_days)
+
+relevance = 1 / (1 + rank)     # Cognee returns results ordered; decay the rank
+                               # rather than inventing a similarity number
 ```
 
-Multiplicative, not a replacement — relevance decides which memories are
-candidates, recency decides which of the relevant ones survive. Nothing is
-deleted. The abandoned preference is still in the graph. It just loses.
+**Multiplicative, not a replacement.** Relevance decides which memories are
+candidates at all; recency decides which of the relevant ones survive. A
+330-day memory at `window=45` is multiplied by `e^(−330/45) ≈ 0.0007` — roughly
+900× quieter than a 20-day one. It isn't removed. It loses.
 
-| | Flat (window 3650d) | Recency-weighted (45d) |
+| Rank | Flat (window 3650d) | Recency-weighted (45d) |
 |---|---|---|
 | 1 | Walk 20k steps a day — **330d** | Skip ticketed attractions — 35d |
 | 2 | Museum-first itineraries — **300d** | In SF for a hackathon — 5d |
@@ -90,144 +145,172 @@ deleted. The abandoned preference is still in the graph. It just loses.
 | 4 | Pre-book marquee tickets — **280d** | Golden hour is the constraint — 12d |
 | 5 | Live music, late shows — **250d** | No car this trip — 3d |
 
-Reversed decisions in the top 8: **flat 4, weighted 0.**
+**Reversed decisions in the top 8: flat 4, weighted 0.** Reproducible with no
+LLM — it's arithmetic on dates (`./demo --prefs`).
 
-## Why 45 days
+### 4 · Agent — `agent.py`
 
-The reversal spacing in this corpus. The knee injury is 45 days old; every
-decision it superseded is 250+ days old. Any window in that gap separates them
-— 45 is the tightest one that does. It is tuned, not learned; see Known risks.
+A Strands `Agent` whose tool list is Bright Data's MCP tools plus the three
+memory tools. Everything runs inside the MCP context manager; tools taken from
+an `MCPClient` stop working the moment that block exits.
+
+The system prompt encodes the policy, not the plan: recall before assuming,
+trust recent decisions over older contradictions, re-verify world facts past
+the freshness window, write corrections back.
+
+---
 
 ## Two datasets, two lifecycles
 
-This separation is the core design decision.
+The core design decision.
 
-|  | `self` | `world` |
+| | `self` | `world` |
 |---|---|---|
-| Source | the traveler's own decisions, patterns, feedback | Bright Data scrapes |
-| Written by | `ingest.py self`, and `remember` at runtime | `ingest.py world`, and `remember` after a live correction |
+| Source | the traveler's decisions, patterns, feedback | Bright Data scrapes |
+| Written by | `ingest self`, and `remember` at runtime | `ingest world`, and `remember` after a live correction |
 | Lifespan | durable — superseded, never deleted | hours — re-verify or discard |
-| Retrieval | `CHUNKS` + recency decay in `decay.py` | `CHUNKS` + a freshness gate that forces a live re-fetch |
+| Retrieval | `CHUNKS` + recency decay | `TEMPORAL` + a freshness gate forcing live re-fetch |
 
 Cognify both into one undifferentiated graph and the agent cannot tell "I tore
-my knee" (true until something supersedes it) from "open until 10pm" (true for
-about a day). Keeping them apart is what makes the freshness rule expressible
-at all.
+my knee" — true until something supersedes it — from "open until 10pm," true
+for about a day. Keeping them apart is what makes the freshness rule
+expressible at all.
 
-## Why dates are written into the prose
-
-Cognee's temporal cognification reads timestamps **out of the text** to build
-event nodes joined by before/after/during edges. A JSON field named `ageDays`
-is invisible to it.
-
-So `ingest.py` renders every memory as a dated sentence:
-
-```
-On 2025-10-26, the traveler recorded a decision: Walk the entire city — no transit, 20k steps a day.
-…
-This was recorded 330 days ago.
-```
-
-Get this wrong and there is nothing for `decay.py` to parse — it splits chunks
-back into memories on exactly this `On <date>, the traveler recorded a …`
-pattern. It is the highest-risk detail in the build, and it is load-bearing
-twice: once for cognify's temporal extraction, once for the re-ranker.
+---
 
 ## Bright Data plays two roles
 
-- **Write path, before the demo** — scrape → cognify into `world`. This *builds*
-  the brain's picture of the outside world.
-- **Read path, during the demo** — the agent calls Bright Data live to *check
-  what memory claims*.
+- **Write path** — scrape → cognify into `world`. Builds the brain's picture of
+  the outside world.
+- **Read path** — the agent calls it live, mid-conversation, to *check what
+  memory claims*.
 
 Same tool, two jobs. That duality is what makes this a personal brain grounded
 in the live world rather than RAG with a scraper bolted on.
 
-## The loop that closes
+---
 
-1. `recall_self` → current constraints (knee, no car, early nights, hackathon).
-2. `recall_world` → a stored fact, with the timestamp it was fetched at.
-3. Past the freshness window → Bright Data re-checks it **live**.
-4. Live web contradicts stored memory → agent says so, fixes the plan.
-5. `remember` writes the correction back.
+## One request, end to end
 
-Step 5 is the point. The brain is more correct after the conversation than
-before it — learning demonstrated on stage, not asserted on a slide.
+```
+"I have a free day in San Francisco before the hackathon. Plan it for me."
 
-## The corpus
+ 1. recall_self          decay.retrieve → CHUNKS from `self`
+                         decay._parse   → 15 Memory objects with dates
+                         decay.rank     → top 8 by relevance × recency
+ 2. recall_world         stored facts + their fetch timestamps
+ 3. search_engine        past the freshness window → verify live
+ 4. scrape_batch         pull the current detail
+ 5. …                    agent reconciles memory against the live world
+ 6. remember             write the correction back to Cognee
+```
 
-15 memories spanning 330 days, in `data/self_memory.json`. Four clean
-reversals:
+That trace is real — captured in `demo_data.json`, rendered as chips on the
+demo page.
 
-| Superseded | Current |
-|---|---|
-| Walk 20k steps a day, no transit (330d) | Knee injury — 3mi cap, transit-adjacent (45d) |
-| Museum-first itineraries (300d) | Stop routing me through museums (25d) |
-| Pre-book marquee ticketed attractions (280d) | Skip ticketed attractions (35d) |
-| Live music, late shows (250d) | Nothing scheduled past 9pm (20d) |
+---
 
-Plus present-tense context: in SF for a hackathon (5d), no car (3d).
+## The control group — `guardian.py`
 
-A flat retriever answers the question with a 20,000-step walking route ending
-at an 8pm show. Every single one of those is a preference the traveler has
-since reversed.
+The comparison is not a strawman. `guardian.py` is a faithful port of the June
+app's real memory code from
+[`travel-guardian/frontend/src/api.js`](https://github.com/abhijitbetigeri/travel-guardian/blob/main/frontend/src/api.js):
 
-## Credit routing
+- its literal `PREF_KEYWORDS` table (api.js:144-149)
+- `extract` ≡ `saveConversationMemory` — substring matching, no LLM
+- `accumulate` ≡ the append-only merge (api.js:168-179):
+  `if (!existingPrefs[c].includes(v)) existingPrefs[c].push(v)`
+- `build_memory_context` ≡ `chatWithAgent`'s prompt assembly (api.js:194-208)
 
-Four LLM bills, three credits — the gap is the one people miss.
+Feed it the same 15 memories and its own algorithm produces:
 
-| Credit | Pays for |
-|---|---|
-| AWS | the Strands agent's reasoning (Bedrock) — **blocked, see below** |
-| Bright Data | search + scrape |
-| Cognee | ingest, **cognify**, recall |
+```
+interests   art, museum, history, nightlife
+mobility    walking
+cuisine     budget, vegetarian
+safety      night
+```
 
-Cognify runs an LLM over every chunk to extract entities and temporal edges —
-its own spend, separate from the agent's. Self-hosted Cognee defaults to
-OpenAI (`llm_provider = "openai"`) and has no documented Bedrock path, so it
-would bill a personal key. **Using the hosted tenant is what puts cognify on
-the Cognee credit.**
+Three of those are reversed decisions. And the knee injury never registers at
+all — the traveler wrote `"transit-adjacent"`, the keyword table looks for
+`"public transport"`, and substring matching never fires on the single most
+consequential constraint.
 
-The tenant's `/api/v1/quotas/usage` reports storage only, not tokens — there is
-no token burn-down. Don't re-cognify the corpus casually.
+The app is still deployed at `travel-guardian.butterbase.dev`, and
+`guardian.py` queries it live, so the comparison is checkable rather than
+asserted.
 
-**Bedrock is wired but unusable on this AWS account.** Every model returns
-`ValidationException Error 002: Access to Bedrock models is not allowed for
-this account` — including Amazon's own Nova, which rules out the Anthropic
-use-case gate. IAM is correct (`AmazonBedrockFullAccess` attached,
-`ListFoundationModels` succeeds) and the inference profiles are ACTIVE; the
-account itself is new and not yet enabled for Bedrock inference. `MODEL_PROVIDER`
-switches the agent between `bedrock` and `anthropic` with no other change.
+---
 
-## Files
+## Module map
 
 ```
 travel_companion/
-  config.py          env loading, dataset names, freshness window
-  cognee_client.py   REST wrapper — datasets, add_text, cognify, recall
-  decay.py           recency re-ranking over Cognee retrieval — the thesis
-  brightdata.py      hosted MCP client + one-shot search for ingest
-  tools.py           recall_self / recall_world / remember as @tool
-  agent.py           Bedrock model + Bright Data MCP + memory tools
-  ingest.py          seed both datasets; renders dates into prose
-demo.py              flat vs temporal vs full agent
-scripts/smoke.py     three credential checks
-data/self_memory.json
+  config.py           env, dataset names, freshness window, model provider
+  cognee_client.py    REST wrapper — datasets, add_text, cognify, recall
+  decay.py            recency re-ranking over Cognee retrieval — the thesis
+  brightdata.py       hosted MCP client + one-shot search for ingest
+  tools.py            recall_self / recall_world / remember as @tool
+  agent.py            model + Bright Data MCP + memory tools
+  ingest.py           seed both datasets; renders dates into prose
+  guardian.py         faithful port of the June app — the control group
+
+compare.py            head-to-head; --prefs is instant and needs no LLM
+demo                  launcher; handles venv and cwd
+scripts/
+  smoke.py            three credential checks
+  snapshot.py         capture a real run → demo_data.json
+  record.py           drive the live page with Playwright → docs/demo.webm
+
+index.html            the interactive demo — slider recomputes ranking client-side
+app.js · demo.css · styles.css
+graph.html            the actual Cognee graph, 187 nodes / 702 edges
+demo_data.json        captured real run, powering the static page
+data/self_memory.json 15 memories, 330-day span, four reversals
 ```
 
-## Known risks
+---
 
-- **Bedrock model access is per-region opt-in.** An un-enabled model returns
-  AccessDenied, not "not found". `scripts/smoke.py bedrock` clears it.
+## Credit routing
+
+Four LLM bills, three credits — the gap is easy to miss.
+
+| Credit | Pays for |
+|---|---|
+| Cognee | ingest, **cognify**, recall |
+| Bright Data | search + scrape |
+| AWS | the Strands agent's reasoning (Bedrock) |
+| — | *cognify's own inference, if self-hosted* |
+
+Cognify runs an LLM over every chunk to extract entities and temporal edges —
+its own spend, separate from the agent's. Self-hosted Cognee defaults to OpenAI
+(`llm_provider = "openai"`, no documented Bedrock path), so self-hosting would
+quietly bill a personal key. **The hosted tenant is what puts cognify on the
+Cognee credit.**
+
+The tenant's `/api/v1/quotas/usage` reports storage only, not tokens — there's
+no burn-down. Don't re-cognify casually.
+
+---
+
+## Known limitations
+
+- **The 45-day window is tuned, not learned.** It separates this corpus because
+  the knee is 45 days old and everything it superseded is 250+. A corpus with
+  different reversal spacing needs a different window. Per-memory-type windows
+  would be better still.
+- **`decay.py` parses dates out of chunk text.** If `ingest.py`'s rendering
+  changes, `ENTRY_RE` must change with it or retrieval silently returns zero
+  memories. `./demo --prefs` catches this instantly — no model, and it prints
+  the parsed count.
+- **Supersession edges are extracted but unused.** Cognify already puts
+  *"supersedes the former walk-everywhere decision"* into the graph. The ranker
+  works around that structure rather than reading it.
 - **MCP tools die outside the context manager.** The agent is built and run
   inside `with brightdata.client()`. Moving `Agent(...)` out of that block
   fails at tool-call time, not construction time.
-- **Cognify is slow and billed.** Seed once, then iterate on retrieval.
-- **The 45-day window is tuned, not learned.** It separates this corpus
-  cleanly; a corpus with different reversal spacing would need a different
-  window, and per-memory-type windows would be better still. Named as future
-  work rather than hidden.
-- **`decay.py` parses dates out of chunk text.** If `ingest.py`'s rendering
-  changes, `ENTRY_RE` must change with it or retrieval silently returns zero
-  memories. `python demo.py --ranking` catches this instantly — it needs no
-  model and prints the parsed count.
+- **Bedrock is wired but unusable on the current AWS account.** Every model
+  returns `ValidationException Error 002` — including Amazon's own Nova, which
+  rules out the Anthropic use-case gate. IAM is correct and the inference
+  profiles are ACTIVE; the account is new and not yet enabled for Bedrock
+  inference. `MODEL_PROVIDER` switches providers with no other change.

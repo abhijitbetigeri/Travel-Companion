@@ -37,8 +37,10 @@ Reversed decisions surfaced in the top 8 — **flat 4, weighted 0**.
 Then the live half — a stored fact about the world goes stale, Bright Data
 re-checks it, the plan changes again, and the correction is written back.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for how and why, and
-[PITCH.md](PITCH.md) for the 3-minute demo script and runbook.
+See [BLOG.md](BLOG.md) for the write-up, [ARCHITECTURE.md](ARCHITECTURE.md)
+for how it's built, and [PITCH.md](PITCH.md) for the demo script.
+
+**Third place — Battle of the Personal Brains**, September 2026.
 
 ---
 
