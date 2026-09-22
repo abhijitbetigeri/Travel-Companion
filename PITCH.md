@@ -1,6 +1,6 @@
 # The pitch
 
-**Demo:** https://abhijitbetigeri.github.io/Travel-Companion/demo.html
+**Demo:** https://abhijitbetigeri.github.io/Travel-Companion/
 **Old app:** https://travel-guardian.butterbase.dev
 
 One story. The knee. Everything hangs off it.
@@ -107,12 +107,13 @@ Expect `walking` on the left, `Knee injury` on the right.
 
 **Tabs, in order:**
 
-1. https://abhijitbetigeri.github.io/Travel-Companion/demo.html
+1. https://abhijitbetigeri.github.io/Travel-Companion/
 2. https://travel-guardian.butterbase.dev
 3. Terminal, `./demo --prefs` typed but not run
 
-**Scroll the demo page as you talk** — Act 1 for the problem, Act 2 for the
-fix, Act 3 for the payoff.
+**The slider is the demo.** At the fix section, drag it from *No decay* to
+*45 days* and let people watch the abandoned preferences fall out of the top 8.
+The counter goes 4 -> 0 live. Hand the laptop over and let a judge drag it.
 
 **If someone wants proof it's live:** run `./demo --prefs`. Two seconds, hits
 Cognee for real.

@@ -188,5 +188,157 @@
       "search_engine",
       "remember"
     ]
-  }
+  },
+  "allMemories": [
+    {
+      "title": "Walk the entire city - no transit, 20k steps a day",
+      "ageDays": 330,
+      "date": "2025-10-27",
+      "kind": "decision",
+      "rank": 0,
+      "superseded": true,
+      "supersededBy": "knee injury, 45d ago",
+      "body": "Decided that walking is how I experience San Francisco and I am building every itinerary around it. Rationale: the city is only seven miles across so nothing is truly far; the best moments on my last four trips were streets I stumbled onto between planned stop"
+    },
+    {
+      "title": "Museum-first itineraries - anchor every day on a major museum",
+      "ageDays": 300,
+      "date": "2025-11-26",
+      "kind": "decision",
+      "rank": 1,
+      "superseded": true,
+      "supersededBy": "reversed 25d ago",
+      "body": "Locking in museums as the backbone of my travel planning. Every day should anchor on at least one serious institution and everything else fills in around it. Rationale: museums are climate-controlled anchors that work regardless of weather; they give me the hi"
+    },
+    {
+      "title": "Skip ticketed attractions - they eat the whole day",
+      "ageDays": 35,
+      "date": "2026-08-18",
+      "kind": "decision",
+      "rank": 2,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "Done pre-booking marquee sites. A timed ticket turns a flexible day into a commute toward one appointment, and Alcatraz in particular burns four hours for a boat ride. Free and open-access places only from here. The advance-booking decision is superseded.\nTags"
+    },
+    {
+      "title": "Book the marquee ticketed attractions well in advance",
+      "ageDays": 280,
+      "date": "2025-12-16",
+      "kind": "decision",
+      "rank": 3,
+      "superseded": true,
+      "supersededBy": "reversed 35d ago",
+      "body": "Standing decision to pre-book the big ticketed sites for any city I visit, San Francisco especially. Rationale: Alcatraz Island sells out three weeks ahead and skipping it once already cost me a trip I regretted; the San Francisco Zoo and the War Memorial Oper"
+    },
+    {
+      "title": "Live music is the point - build nights around late shows",
+      "ageDays": 250,
+      "date": "2026-01-15",
+      "kind": "decision",
+      "rank": 4,
+      "superseded": true,
+      "supersededBy": "reversed 20d ago",
+      "body": "Decided that live music venues are the reason I pick cities and San Francisco is the clearest case. Rationale: The Fillmore is a room with actual history and seeing anything there beats seeing the same act anywhere else; the Castro Theatre programming - sing-a"
+    },
+    {
+      "title": "Stop routing me through museums",
+      "ageDays": 25,
+      "date": "2026-08-28",
+      "kind": "feedback",
+      "rank": 5,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "Museums are not landing for me anymore - I have been indoors under fluorescent light for a year of work and I do not want to spend a free day the same way. Stop making them the anchor. Outdoors and open air by default now.\nTags: feedback, museums, outdoors, su"
+    },
+    {
+      "title": "The Pier 45 recommendation was a miss",
+      "ageDays": 95,
+      "date": "2026-06-19",
+      "kind": "feedback",
+      "rank": 6,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "Pier 45 and the Musee Mecanique got recommended as a highlight and it was a tourist crush with nothing to actually look at. Do not route me through the waterfront tourist strip again unless there is a specific reason.\nTags: feedback, Pier 45, avoid, waterfront"
+    },
+    {
+      "title": "In SF for a hackathon at 33 New Montgomery",
+      "ageDays": 5,
+      "date": "2026-09-17",
+      "kind": "context",
+      "rank": 7,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "In San Francisco this week for a hackathon at the Elastic office, 33 New Montgomery Street, in the SoMa district. Days are committed. Free block is tomorrow before things start.\nTags: context, SoMa, New Montgomery, hackathon, current trip.\nThis was recorded 5 "
+    },
+    {
+      "title": "Early nights now - nothing scheduled past 9pm",
+      "ageDays": 20,
+      "date": "2026-09-02",
+      "kind": "decision",
+      "rank": 8,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "Sleep has become the thing that determines whether the next day works. No shows, no late seatings, nothing that starts after 9pm. Sunset is the target for the last activity of the day. The late-show decision is superseded.\nTags: evening, sleep, schedule, super"
+    },
+    {
+      "title": "Golden hour is the planning constraint",
+      "ageDays": 12,
+      "date": "2026-09-10",
+      "kind": "pattern",
+      "rank": 9,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "Emerging pattern: I want the last outdoor stop timed to sunset rather than squeezed in before dinner. Coastal and elevated viewpoints specifically. Plan backward from golden hour.\nTags: golden hour, sunset, outdoors, planning.\nThis was recorded 12 days ago."
+    },
+    {
+      "title": "Self-guided over group tours, always",
+      "ageDays": 200,
+      "date": "2026-03-06",
+      "kind": "pattern",
+      "rank": 10,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "Consistent preference across trips: I do not book guided group tours. I would rather read ahead and walk it myself at my own pace than be moved through a site on someone else's clock. Audio guides are fine. Private guides are fine if the site genuinely require"
+    },
+    {
+      "title": "Batteries to Bluffs was exactly right",
+      "ageDays": 28,
+      "date": "2026-08-25",
+      "kind": "feedback",
+      "rank": 11,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "The Batteries to Bluffs Trail suggestion was the best thing recommended to me all year - outdoors, coastal, no ticket, no crowd, and I set my own pace. More of this shape.\nTags: feedback, Batteries to Bluffs Trail, outdoors, trail, positive.\nThis was recorded "
+    },
+    {
+      "title": "No car this trip",
+      "ageDays": 3,
+      "date": "2026-09-19",
+      "kind": "context",
+      "rank": 12,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "Not renting a car on this trip. Anything that requires driving is out - it needs to be walkable from transit or it does not happen.\nTags: context, transit, no car, current trip.\nThis was recorded 3 days ago."
+    },
+    {
+      "title": "Knee injury - walking radius capped, transit-adjacent only",
+      "ageDays": 45,
+      "date": "2026-08-08",
+      "kind": "decision",
+      "rank": 13,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "Tore something in my right knee. Hard cap of three miles total on foot per day and no sustained hills. Everything now has to be transit-adjacent or it does not go on the itinerary. The walk-everywhere decision is superseded.\nTags: mobility, accessibility, knee"
+    },
+    {
+      "title": "Photo-first traveler - recognition is the primary interaction",
+      "ageDays": 150,
+      "date": "2026-04-25",
+      "kind": "context",
+      "rank": 14,
+      "superseded": false,
+      "supersededBy": null,
+      "body": "How I actually use a travel assistant: I photograph a building I am standing in front of and want to know what it is and whether it matters. The Shell Building and the Golden Coin Building are both cases where I had the photo before I had the name. Scene recog"
+    }
+  ]
 }
