@@ -518,10 +518,6 @@ footer p { color: var(--ink-3); font-size: 13.5px; }
   .hero-actions     { animation-delay: .26s; }
   .hero-card        { animation-delay: .34s; }
 
-  @keyframes rise {
-    from { opacity: 0; translate: 0 18px; }
-    to   { opacity: 1; translate: 0 0; }
-  }
 }
 
 /* ── responsive ──────────────────────────────────────────── */
@@ -540,4 +536,9 @@ footer p { color: var(--ink-3); font-size: 13.5px; }
   .nav-cta { margin-left: auto; }
   .stack-items { gap: 28px; flex-direction: column; }
   .hero-actions { gap: 18px; }
+}
+
+@keyframes rise {
+  from { opacity: 0; translate: 0 18px; }
+  to   { opacity: 1; translate: 0 0; }
 }

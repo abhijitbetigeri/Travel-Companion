@@ -36,8 +36,9 @@
       <p class="timeline-key">
         <span class="k stale"></span> reversed later
         <span class="k fresh"></span> still true
-        <em>— 15 memories over 330 days. Hover any dot.</em>
+        <em>— 15 memories over 330 days. <b>Click any dot.</b></em>
       </p>
+      <div class="mem-detail" id="mem-detail" hidden></div>
     </header>
 
     <!-- ② PROBLEM ───────────────────────────────────────── -->
@@ -60,6 +61,9 @@
                The keyword list looks for <code>"public transport"</code>.</p>
             <p class="punch">No match. The most important thing about this
                person fell on the floor.</p>
+            <a class="src" target="_blank" rel="noopener"
+               href="https://github.com/abhijitbetigeri/travel-guardian/blob/main/frontend/src/api.js#L144-L179">
+               see the real code · api.js ↗</a>
           </div>
         </div>
 
@@ -68,7 +72,11 @@
             <span>travel-guardian · live</span>
             <a href="https://travel-guardian.butterbase.dev" target="_blank" rel="noopener">butterbase.dev ↗</a>
           </div>
-          <div class="rc-body" id="guardian-answer">…</div>
+          <div class="ask-gate" id="gate-old">
+            <p class="ask-q">“I have a free day in San Francisco before the hackathon. Plan it for me.”</p>
+            <button class="ask-btn" id="ask-old">Ask the June app <span>→</span></button>
+          </div>
+          <div class="rc-body" id="guardian-answer" hidden>…</div>
         </div>
       </div>
     </section>
@@ -102,6 +110,10 @@
           </div>
         </div>
 
+        <a class="src center-src" target="_blank" rel="noopener"
+           href="https://github.com/abhijitbetigeri/Travel-Companion/blob/main/travel_companion/decay.py">
+           relevance × e<sup>−age/window</sup> · decay.py ↗</a>
+
         <div class="counter" id="counter">
           <b id="stale-count">4</b>
           <span>outdated preferences in the traveler's top&nbsp;8</span>
@@ -124,8 +136,12 @@
       <div class="split">
         <div class="reply-card fresh">
           <div class="rc-top"><span>Travel Companion</span><span class="ok">knee-aware</span></div>
-          <div class="trace" id="trace"></div>
-          <div class="rc-body" id="companion-answer">…</div>
+          <div class="ask-gate" id="gate-new">
+            <p class="ask-q">Same question. Same 15 memories.</p>
+            <button class="ask-btn fresh" id="ask-new">Ask the new brain <span>→</span></button>
+          </div>
+          <div class="trace" id="trace" hidden></div>
+          <div class="rc-body" id="companion-answer" hidden>…</div>
         </div>
 
         <div>
@@ -150,6 +166,10 @@
         <div><span class="stack-dot cognee"></span><strong>Cognee</strong><small>memory graph</small></div>
         <div><span class="stack-dot bright"></span><strong>Bright Data</strong><small>the live web</small></div>
         <div><span class="stack-dot aws"></span><strong>AWS Strands</strong><small>the agent</small></div>
+      </div>
+      <div class="close-links">
+        <a class="button button-dark" href="https://github.com/abhijitbetigeri/Travel-Companion">View the source <span>↗</span></a>
+        <a class="text-link" href="https://travel-guardian.butterbase.dev" target="_blank" rel="noopener">Try the old app yourself <span>↗</span></a>
       </div>
       <p class="capture-note">Captured from a real run · <span id="captured">…</span></p>
     </section>

@@ -69,6 +69,52 @@ function renderTimeline() {
       <span class="tl-label tl-new">today</span>`;
 }
 
+function wireTimeline() {
+  const panel = $("mem-detail");
+  document.querySelectorAll(".dot").forEach((dot, i) => {
+    const show = () => {
+      const m = MEMS[i];
+      document.querySelectorAll(".dot").forEach((d) => d.classList.remove("on"));
+      dot.classList.add("on");
+      panel.hidden = false;
+      panel.className = "mem-detail " + (m.superseded ? "stale" : "fresh");
+      panel.innerHTML = `
+        <div class="md-top">
+          <span class="md-kind">${esc(m.kind)}</span>
+          <span class="md-when">${esc(m.date)} · ${m.ageDays} days ago</span>
+        </div>
+        <h4>${esc(m.title)}</h4>
+        <p>${esc(m.body)}</p>
+        <span class="tag ${m.superseded ? "stale" : "fresh"}">
+          ${m.superseded ? "abandoned · " + esc(m.supersededBy) : "still true today"}
+        </span>`;
+      panel.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    };
+    dot.addEventListener("click", show);
+    dot.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); show(); }
+    });
+  });
+}
+
+/* Reveal an answer behind its Ask button, one paragraph at a time. */
+function wireAsk(btnId, gateId, bodyId, traceId) {
+  const btn = $(btnId);
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    $(gateId).classList.add("gone");
+    setTimeout(() => {
+      $(gateId).hidden = true;
+      if (traceId && $(traceId)) $(traceId).hidden = false;
+      const body = $(bodyId);
+      body.hidden = false;
+      body.querySelectorAll(":scope > *").forEach((el, i) => {
+        el.style.animation = `rise .5s cubic-bezier(.2,.8,.2,1) ${i * 55}ms backwards`;
+      });
+    }, 260);
+  });
+}
+
 async function main() {
   let d;
   try {
@@ -81,6 +127,7 @@ async function main() {
 
   MEMS = d.allMemories || [];
   renderTimeline();
+  wireTimeline();
   renderRank(3650);
 
   $("captured").textContent = new Date(d.capturedAt).toLocaleString(undefined,
@@ -105,6 +152,9 @@ async function main() {
       .map((t, i) => `<span class="tool" style="animation-delay:${i * 80}ms">${esc(t)}</span>`)
       .join('<i class="arrow">→</i>');
   }
+
+  wireAsk("ask-old", "gate-old", "guardian-answer", null);
+  wireAsk("ask-new", "gate-new", "companion-answer", "trace");
 
   /* the interaction */
   const slider = $("window");
