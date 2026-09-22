@@ -1,0 +1,90 @@
+# Travel Companion
+
+A travel agent whose memory knows which version of you is still current.
+
+Most agent-memory work fixes forgetting. This targets the opposite failure: an
+agent that remembers everything, weights it all equally, and confidently acts
+on preferences you abandoned months ago.
+
+> **Supersession is a retrieval problem, not a storage problem.**
+> Nothing is deleted or edited. The old memory is still in the graph — it just
+> loses.
+
+Built for **Battle of the Personal Brains** (Bright Data · Cognee · AWS Strands).
+
+---
+
+## The demo
+
+One question, asked three ways. The traveler tore their knee 45 days ago and
+has a hackathon in the morning.
+
+> *"I have a free day in San Francisco before the hackathon. Plan it for me."*
+
+| | Flat retrieval | Time-aware |
+|---|---|---|
+| Getting around | 20,000-step walking route | transit-adjacent, 3mi cap |
+| Daytime | museum-anchored, pre-booked ticket | outdoors, no ticket |
+| Evening | live music, 8:00pm onwards | in bed by 9pm |
+
+Only one thing changed between those columns: `searchType`.
+
+Then the live half — a stored fact about the world goes stale, Bright Data
+re-checks it, the plan changes again, and the correction is written back.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for how and why.
+
+---
+
+## Setup
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+cp .env.example .env     # fill in Cognee, Bright Data, AWS
+aws configure            # or export AWS creds
+```
+
+**Run the credential checks first.** Each of the three can fail in a boring
+way, and finding out later is what kills projects:
+
+```bash
+python scripts/smoke.py
+```
+
+Bedrock is the one that bites — model access is per-region opt-in and an
+un-enabled model returns AccessDenied, not "not found".
+
+## Seed the brain
+
+```bash
+python -m travel_companion.ingest self
+python -m travel_companion.ingest world --query "Batteries to Bluffs Trail hours"
+```
+
+`cognify` is the slow, billed call. Seed once, then iterate on retrieval.
+
+## Run
+
+```bash
+python demo.py                                    # the three-stage demo
+python -m travel_companion.agent "your question"  # just the agent
+```
+
+---
+
+## Stack
+
+| Piece | What it does |
+|---|---|
+| **Cognee** (hosted tenant) | the brain — knowledge graph, `SearchType.TEMPORAL` |
+| **Bright Data** (hosted MCP) | the live world — search and scrape |
+| **AWS Strands** + Bedrock | the agent loop and its reasoning model |
+
+## Credits
+
+Lineage: [agent-memory](https://github.com/abhijitbetigeri/agent-memory) — the
+supersession thesis and the 15-entry corpus, originally on Elasticsearch +
+Mastra. [travel-guardian](https://github.com/abhijitbetigeri/travel-guardian) —
+the domain ontology, and the append-only preference bug this exists to fix.

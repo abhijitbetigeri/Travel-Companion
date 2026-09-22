@@ -1,0 +1,107 @@
+[
+  {
+    "type": "decision",
+    "title": "Walk the entire city - no transit, 20k steps a day",
+    "content": "Decided that walking is how I experience San Francisco and I am building every itinerary around it. Rationale: the city is only seven miles across so nothing is truly far; the best moments on my last four trips were streets I stumbled onto between planned stops, never the stops themselves; transit schedules make me watch the clock instead of the city; and the hills are the whole character of the place - the view from the top of Union Street is earned, not delivered. Target is 20,000 steps a day minimum. Route planning rule: chain stops that are at most a 40 minute walk apart, never book anything that requires a car, and treat a day with under 15k steps as a day I planned badly. Golden Gate Park to Lincoln Park on foot is the benchmark day.",
+    "tags": ["mobility", "walking", "routing", "Union Street", "Lincoln Park"],
+    "ageDays": 330
+  },
+  {
+    "type": "decision",
+    "title": "Museum-first itineraries - anchor every day on a major museum",
+    "content": "Locking in museums as the backbone of my travel planning. Every day should anchor on at least one serious institution and everything else fills in around it. Rationale: museums are climate-controlled anchors that work regardless of weather; they give me the historical context that makes the rest of the neighborhood legible; the San Francisco Museum of Modern Art alone justifies two separate visits given how much rotates; the Contemporary Jewish Museum and the Marcia and John Price Museum are exactly the mid-size institutions I like where you can actually finish a floor; and museum cafes are reliably the best lunch option in an unfamiliar district. Booking rule: reserve the timed entry first, then build the walking route around it. Aim for one major and one minor institution per day.",
+    "tags": ["museums", "itinerary", "SFMOMA", "Contemporary Jewish Museum", "anchor"],
+    "ageDays": 300
+  },
+  {
+    "type": "decision",
+    "title": "Book the marquee ticketed attractions well in advance",
+    "content": "Standing decision to pre-book the big ticketed sites for any city I visit, San Francisco especially. Rationale: Alcatraz Island sells out three weeks ahead and skipping it once already cost me a trip I regretted; the San Francisco Zoo and the War Memorial Opera House both reward advance seating; the ticketed sites are ticketed precisely because they are the things people actually remember; and having a fixed anchor with a time on it forces me to structure an otherwise shapeless day. Rule: book Alcatraz the moment dates are confirmed, then the Opera House if anything is running, then fill the rest. Budget up to $150 a day for admissions - it is the part of travel worth overspending on.",
+    "tags": ["tickets", "attractions", "Alcatraz Island", "San Francisco Zoo", "War Memorial Opera House", "booking"],
+    "ageDays": 280
+  },
+  {
+    "type": "decision",
+    "title": "Live music is the point - build nights around late shows",
+    "content": "Decided that live music venues are the reason I pick cities and San Francisco is the clearest case. Rationale: The Fillmore is a room with actual history and seeing anything there beats seeing the same act anywhere else; the Castro Theatre programming - sing-alongs, revivals, the organ before the film - is the kind of thing that does not exist at home; shows starting at 9 or 10pm mean the whole evening builds toward something instead of trailing off into a restaurant; and the walk home through the Castro or the Fillmore district afterward has produced more good memories than any daytime activity. Rule: check both venues' calendars before booking flights, and never schedule anything before 11am the following morning.",
+    "tags": ["nightlife", "music", "The Fillmore", "Castro Theatre", "evening"],
+    "ageDays": 250
+  },
+  {
+    "type": "pattern",
+    "title": "Self-guided over group tours, always",
+    "content": "Consistent preference across trips: I do not book guided group tours. I would rather read ahead and walk it myself at my own pace than be moved through a site on someone else's clock. Audio guides are fine. Private guides are fine if the site genuinely requires one.",
+    "tags": ["tours", "style", "self-guided"],
+    "ageDays": 200
+  },
+  {
+    "type": "context",
+    "title": "Photo-first traveler - recognition is the primary interaction",
+    "content": "How I actually use a travel assistant: I photograph a building I am standing in front of and want to know what it is and whether it matters. The Shell Building and the Golden Coin Building are both cases where I had the photo before I had the name. Scene recognition first, then significance, then what is nearby.",
+    "tags": ["photo", "recognition", "Shell Building", "Golden Coin Building", "workflow"],
+    "ageDays": 150
+  },
+  {
+    "type": "feedback",
+    "title": "The Pier 45 recommendation was a miss",
+    "content": "Pier 45 and the Musee Mecanique got recommended as a highlight and it was a tourist crush with nothing to actually look at. Do not route me through the waterfront tourist strip again unless there is a specific reason.",
+    "tags": ["feedback", "Pier 45", "avoid", "waterfront"],
+    "ageDays": 95
+  },
+  {
+    "type": "decision",
+    "title": "Knee injury - walking radius capped, transit-adjacent only",
+    "content": "Tore something in my right knee. Hard cap of three miles total on foot per day and no sustained hills. Everything now has to be transit-adjacent or it does not go on the itinerary. The walk-everywhere decision is superseded.",
+    "tags": ["mobility", "accessibility", "knee", "transit", "supersedes"],
+    "ageDays": 45
+  },
+  {
+    "type": "decision",
+    "title": "Skip ticketed attractions - they eat the whole day",
+    "content": "Done pre-booking marquee sites. A timed ticket turns a flexible day into a commute toward one appointment, and Alcatraz in particular burns four hours for a boat ride. Free and open-access places only from here. The advance-booking decision is superseded.",
+    "tags": ["tickets", "attractions", "Alcatraz Island", "supersedes", "flexible"],
+    "ageDays": 35
+  },
+  {
+    "type": "feedback",
+    "title": "Batteries to Bluffs was exactly right",
+    "content": "The Batteries to Bluffs Trail suggestion was the best thing recommended to me all year - outdoors, coastal, no ticket, no crowd, and I set my own pace. More of this shape.",
+    "tags": ["feedback", "Batteries to Bluffs Trail", "outdoors", "trail", "positive"],
+    "ageDays": 28
+  },
+  {
+    "type": "feedback",
+    "title": "Stop routing me through museums",
+    "content": "Museums are not landing for me anymore - I have been indoors under fluorescent light for a year of work and I do not want to spend a free day the same way. Stop making them the anchor. Outdoors and open air by default now.",
+    "tags": ["feedback", "museums", "outdoors", "supersedes", "SFMOMA"],
+    "ageDays": 25
+  },
+  {
+    "type": "decision",
+    "title": "Early nights now - nothing scheduled past 9pm",
+    "content": "Sleep has become the thing that determines whether the next day works. No shows, no late seatings, nothing that starts after 9pm. Sunset is the target for the last activity of the day. The late-show decision is superseded.",
+    "tags": ["evening", "sleep", "schedule", "supersedes", "The Fillmore"],
+    "ageDays": 20
+  },
+  {
+    "type": "pattern",
+    "title": "Golden hour is the planning constraint",
+    "content": "Emerging pattern: I want the last outdoor stop timed to sunset rather than squeezed in before dinner. Coastal and elevated viewpoints specifically. Plan backward from golden hour.",
+    "tags": ["golden hour", "sunset", "outdoors", "planning"],
+    "ageDays": 12
+  },
+  {
+    "type": "context",
+    "title": "In SF for a hackathon at 33 New Montgomery",
+    "content": "In San Francisco this week for a hackathon at the Elastic office, 33 New Montgomery Street, in the SoMa district. Days are committed. Free block is tomorrow before things start.",
+    "tags": ["context", "SoMa", "New Montgomery", "hackathon", "current trip"],
+    "ageDays": 5
+  },
+  {
+    "type": "context",
+    "title": "No car this trip",
+    "content": "Not renting a car on this trip. Anything that requires driving is out - it needs to be walkable from transit or it does not happen.",
+    "tags": ["context", "transit", "no car", "current trip"],
+    "ageDays": 3
+  }
+]
