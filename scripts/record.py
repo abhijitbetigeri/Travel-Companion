@@ -17,7 +17,8 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs"
 TMP = ROOT / ".rec"
-URL = "https://abhijitbetigeri.github.io/Travel-Companion/"
+import os
+URL = os.environ.get("DEMO_URL", "https://abhijitbetigeri.github.io/Travel-Companion/")
 W, H = 1440, 900
 
 
@@ -51,12 +52,16 @@ def main() -> None:
         glide(page, ".story", 1400)
         glide(page, ".timeline", 900)
 
-        # click the oldest memory, then the knee
-        dots = page.locator(".dot")
-        dots.nth(0).click()                      # 330d — walk 20k steps
-        page.wait_for_timeout(2600)
-        dots.nth(7).click()                      # 45d — knee injury
-        page.wait_for_timeout(3000)
+        # Click by content, not index: dot order follows retrieval rank while
+        # position follows age, and the recent dots overlap each other — so
+        # dispatch the event directly rather than relying on hit-testing.
+        def click_dot(fragment: str, hold: int) -> None:
+            page.eval_on_selector(
+                f'.dot[data-tip*="{fragment}"]', "el => el.click()")
+            page.wait_for_timeout(hold)
+
+        click_dot("Walk the entire city", 3000)   # 330d — the old self
+        click_dot("Knee injury", 3400)            # 45d — the turn
 
         # ── 2. what the old app believes ──────────────────────────────
         glide(page, "#problem", 1000)
