@@ -1,60 +1,83 @@
-"""The demo. One question, three retrievals, one visible change of mind.
+"""The demo. One question, one memory, one variable.
 
-    python demo.py
+    python demo.py            # full run
+    python demo.py --ranking  # just the ranking table (no model calls, instant)
 
-Stage 1 and 2 are the same question against the same memory, differing only in
-whether retrieval is time-aware. That is the whole argument: the traveler tore
-their knee 45 days ago, and flat retrieval still hands back the 330-day-old
-"walk 20k steps a day" decision as though it stood.
-
-Stage 3 is the live half — the world moves, and stored world facts rot.
+Stage 1 is deterministic and needs no LLM: the same 15 memories, ranked twice,
+differing only in the decay window. Four of the traveler's decisions were later
+reversed, and flat ranking puts the reversed ones on top.
 """
 
 from __future__ import annotations
 
+import sys
+
 from rich.console import Console
 from rich.panel import Panel
+from rich.table import Table
 
-from travel_companion import brightdata
-from travel_companion import cognee_client as cog
+from travel_companion import brightdata, decay
 from travel_companion.agent import build
 from travel_companion.config import DATASET_SELF
 
 console = Console()
 
 QUESTION = "I have a free day in San Francisco before the hackathon. Plan it for me."
+RETRIEVAL_QUERY = "free day in San Francisco: walking, museums, tickets, evening plans"
 
-# Each pair is (superseded decision, the decision that replaced it).
-SUPERSESSIONS = [
-    ("Walk 20k steps a day, no transit (330d)", "Knee injury, 3mi cap, transit-adjacent (45d)"),
-    ("Museum-first itineraries (300d)", "Stop routing me through museums (25d)"),
-    ("Pre-book marquee ticketed attractions (280d)", "Skip ticketed attractions (35d)"),
-    ("Live music, late shows (250d)", "Nothing scheduled past 9pm (20d)"),
-]
+SUPERSEDED = {
+    "Walk the entire city - no transit, 20k steps a day",
+    "Museum-first itineraries - anchor every day on a major museum",
+    "Book the marquee ticketed attractions well in advance",
+    "Live music is the point - build nights around late shows",
+}
 
 
-def header(n: int, title: str, subtitle: str) -> None:
-    console.print()
-    console.rule(f"[bold]{n}. {title}")
-    console.print(f"[dim]{subtitle}[/dim]\n")
+def ranking_table() -> None:
+    mems = decay.retrieve(RETRIEVAL_QUERY, DATASET_SELF, top_k=25)
+    console.print(f"\n[dim]{len(mems)} memories in the brain, spanning "
+                  f"{max(m.age_days for m in mems)} days[/dim]\n")
+
+    table = Table(show_header=True, header_style="bold")
+    table.add_column("#", width=3)
+    table.add_column("Flat ranking (decay off)")
+    table.add_column("age", justify="right", width=6)
+    table.add_column("Recency-weighted (45d)")
+    table.add_column("age", justify="right", width=6)
+
+    flat = decay.rank(mems, window_days=decay.FLAT_WINDOW_DAYS, limit=8)
+    warm = decay.rank(mems, window_days=decay.DEFAULT_WINDOW_DAYS, limit=8)
+
+    for i, (f, w) in enumerate(zip(flat, warm), 1):
+        fo = f.title in SUPERSEDED
+        wo = w.title in SUPERSEDED
+        table.add_row(
+            str(i),
+            f"[red]{f.title[:44]}[/red]" if fo else f.title[:44],
+            f"[red]{f.age_days}d[/red]" if fo else f"{f.age_days}d",
+            f"[red]{w.title[:44]}[/red]" if wo else f"[green]{w.title[:44]}[/green]",
+            f"[red]{w.age_days}d[/red]" if wo else f"[green]{w.age_days}d[/green]",
+        )
+
+    console.print(table)
+    console.print(
+        f"\n[red]red[/red] = a decision the traveler has since reversed. "
+        f"Flat surfaces {sum(m.title in SUPERSEDED for m in flat)} of them in its top 8; "
+        f"recency-weighted surfaces {sum(m.title in SUPERSEDED for m in warm)}.\n"
+    )
 
 
 def main() -> None:
     console.print(Panel.fit(QUESTION, title="the question", border_style="cyan"))
 
-    console.print("\n[dim]four reversals sitting in this memory:[/dim]")
-    for old, new in SUPERSESSIONS:
-        console.print(f"  [red]{old}[/red]  ->  [green]{new}[/green]")
+    console.rule("[bold]1. The same memory, ranked two ways")
+    ranking_table()
 
-    header(1, "Flat retrieval", "same memory, no sense of time — the failure mode")
-    flat = cog.recall(QUESTION, DATASET_SELF, search_type=cog.GRAPH, top_k=10)
-    console.print(str(flat)[:2000])
+    if "--ranking" in sys.argv:
+        return
 
-    header(2, "Time-aware retrieval", "SearchType.TEMPORAL — recent decisions win")
-    temporal = cog.recall(QUESTION, DATASET_SELF, search_type=cog.TEMPORAL, top_k=10)
-    console.print(str(temporal)[:2000])
-
-    header(3, "The full agent", "memory + live web + write-back")
+    console.rule("[bold]2. The agent: memory + live web + write-back")
+    console.print()
     with brightdata.client() as bright:
         agent = build(bright)
         console.print(str(agent(QUESTION)))

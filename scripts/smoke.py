@@ -31,6 +31,19 @@ def check_cognee() -> None:
     print(f"  quota: {cog.quota()}")
 
 
+def check_model() -> None:
+    """Whichever provider MODEL_PROVIDER selects — this is what the agent runs on."""
+    from strands import Agent
+
+    from travel_companion.agent import model
+    from travel_companion.config import MODEL_PROVIDER
+
+    agent = Agent(model=model(), system_prompt="Reply with one word.")
+    said = str(agent("Say: ready")).strip()
+    print(f"  provider: {MODEL_PROVIDER}")
+    print(f"  said:     {said[:60]!r}")
+
+
 def check_bedrock() -> None:
     import boto3
 
@@ -58,11 +71,18 @@ def check_brightdata() -> None:
     print(f"  {len(names)} tools: {', '.join(names[:8])}{' ...' if len(names) > 8 else ''}")
 
 
-CHECKS = {"cognee": check_cognee, "bedrock": check_bedrock, "brightdata": check_brightdata}
+CHECKS = {
+    "cognee": check_cognee,
+    "model": check_model,
+    "brightdata": check_brightdata,
+    "bedrock": check_bedrock,  # not in the default run while Bedrock is blocked
+}
+
+DEFAULT = ["cognee", "model", "brightdata"]
 
 
 def main() -> None:
-    wanted = sys.argv[1:] or list(CHECKS)
+    wanted = sys.argv[1:] or DEFAULT
     failed = []
     for name in wanted:
         print(f"\n=== {name} ===")

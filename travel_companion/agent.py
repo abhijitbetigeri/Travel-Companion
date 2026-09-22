@@ -59,8 +59,11 @@ def model():
     if MODEL_PROVIDER == "anthropic":
         from strands.models.anthropic import AnthropicModel
 
+        # AnthropicModel requires max_tokens explicitly; Bedrock defaults it.
         return AnthropicModel(
-            client_args={"api_key": ANTHROPIC_API_KEY}, model_id=ANTHROPIC_MODEL_ID
+            client_args={"api_key": ANTHROPIC_API_KEY},
+            model_id=ANTHROPIC_MODEL_ID,
+            max_tokens=4096,
         )
     return BedrockModel(model_id=BEDROCK_MODEL_ID, region_name=AWS_REGION)
 

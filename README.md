@@ -21,13 +21,18 @@ has a hackathon in the morning.
 
 > *"I have a free day in San Francisco before the hackathon. Plan it for me."*
 
-| | Flat retrieval | Time-aware |
+| | Flat retrieval | Recency-weighted |
 |---|---|---|
 | Getting around | 20,000-step walking route | transit-adjacent, 3mi cap |
 | Daytime | museum-anchored, pre-booked ticket | outdoors, no ticket |
-| Evening | live music, 8:00pm onwards | in bed by 9pm |
+| Evening | live music, 8:00pm onwards | done by 8:30pm |
 
-Only one thing changed between those columns: `searchType`.
+Only one thing changed between those columns: the decay window.
+Reversed decisions surfaced in the top 8 — **flat 4, weighted 0**.
+
+```bash
+python demo.py --ranking   # deterministic, no model calls, instant
+```
 
 Then the live half — a stored fact about the world goes stale, Bright Data
 re-checks it, the plan changes again, and the correction is written back.
@@ -53,8 +58,9 @@ way, and finding out later is what kills projects:
 python scripts/smoke.py
 ```
 
-Bedrock is the one that bites — model access is per-region opt-in and an
-un-enabled model returns AccessDenied, not "not found".
+Set `MODEL_PROVIDER=bedrock` to use AWS, or `anthropic` to use the Anthropic
+API directly. Bedrock is fully wired but blocked on this AWS account — see
+Credit routing in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Seed the brain
 
@@ -78,7 +84,7 @@ python -m travel_companion.agent "your question"  # just the agent
 
 | Piece | What it does |
 |---|---|
-| **Cognee** (hosted tenant) | the brain — knowledge graph, `SearchType.TEMPORAL` |
+| **Cognee** (hosted tenant) | the brain — knowledge graph over the traveler's history |
 | **Bright Data** (hosted MCP) | the live world — search and scrape |
 | **AWS Strands** + Bedrock | the agent loop and its reasoning model |
 

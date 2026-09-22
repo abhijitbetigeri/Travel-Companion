@@ -13,6 +13,7 @@ import json
 from strands import tool
 
 from . import cognee_client as cog
+from . import decay
 from .config import DATASET_SELF, DATASET_WORLD, WORLD_FRESHNESS_HOURS
 
 
@@ -26,15 +27,18 @@ def _render(result) -> str:
 def recall_self(query: str, time_aware: bool = True) -> str:
     """Recall what is true about the traveler — preferences, constraints, history.
 
+    Results are recency-weighted: a decision the traveler reversed loses to the
+    one that replaced it, even though both are still in the graph. Every result
+    carries the date it was recorded and how long ago that was.
+
     Args:
         query: natural-language question about the traveler.
-        time_aware: when True (default) use time-aware retrieval, so a recent
-            decision outranks an older one it contradicts. Set False only to
-            demonstrate the failure mode: flat retrieval that treats an
+        time_aware: when True (default) apply recency decay. Set False only to
+            demonstrate the failure mode — flat retrieval that treats an
             abandoned preference as though it still stood.
     """
-    mode = cog.TEMPORAL if time_aware else cog.GRAPH
-    return _render(cog.recall(query, DATASET_SELF, search_type=mode))
+    window = decay.DEFAULT_WINDOW_DAYS if time_aware else decay.FLAT_WINDOW_DAYS
+    return decay.context(query, DATASET_SELF, window_days=window)
 
 
 @tool
