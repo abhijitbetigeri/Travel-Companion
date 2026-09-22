@@ -1,7 +1,7 @@
 # The pitch — 3 minutes
 
 **Demo page:** https://abhijitbetigeri.github.io/Travel-Companion/demo.html
-**Terminal backup:** `python compare.py --prefs` (instant, no network)
+**Terminal backup:** `./demo --prefs` (instant, no network)
 
 Scroll the demo page as you talk. One act per beat.
 
@@ -130,14 +130,14 @@ Scroll the demo page as you talk. One act per beat.
 # Before you present
 
 ```bash
-python compare.py --seed     # KV has a 7-day TTL
+./demo --seed     # KV has a 7-day TTL
 ```
 
 Open in tabs, in order:
 
 1. https://abhijitbetigeri.github.io/Travel-Companion/demo.html
 2. https://travel-guardian.butterbase.dev
-3. Terminal with `python compare.py --prefs` ready
+3. Terminal with `./demo --prefs` ready
 
 **If the wifi dies:** the demo page is static and already loaded, and
 `--prefs` needs no network. The argument survives intact.

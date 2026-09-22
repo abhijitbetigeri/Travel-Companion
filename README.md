@@ -31,7 +31,7 @@ Only one thing changed between those columns: the decay window.
 Reversed decisions surfaced in the top 8 — **flat 4, weighted 0**.
 
 ```bash
-python demo.py --ranking   # deterministic, no model calls, instant
+./demo --prefs   # deterministic, no model calls, instant
 ```
 
 Then the live half — a stored fact about the world goes stale, Bright Data
@@ -55,7 +55,7 @@ aws configure            # or export AWS creds
 way, and finding out later is what kills projects:
 
 ```bash
-python scripts/smoke.py
+./demo smoke
 ```
 
 Set `MODEL_PROVIDER=bedrock` to use AWS, or `anthropic` to use the Anthropic
@@ -65,8 +65,8 @@ Credit routing in [ARCHITECTURE.md](ARCHITECTURE.md).
 ## Seed the brain
 
 ```bash
-python -m travel_companion.ingest self
-python -m travel_companion.ingest world --query "Batteries to Bluffs Trail hours"
+./demo ingest self
+./demo ingest world --query "Batteries to Bluffs Trail hours"
 ```
 
 `cognify` is the slow, billed call. Seed once, then iterate on retrieval.
@@ -74,8 +74,8 @@ python -m travel_companion.ingest world --query "Batteries to Bluffs Trail hours
 ## Run
 
 ```bash
-python demo.py                                    # the three-stage demo
-python -m travel_companion.agent "your question"  # just the agent
+./demo                                    # the three-stage demo
+./demo ask "your question"  # just the agent
 ```
 
 ---

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Run the demo from anywhere, with the right interpreter. No PATH surprises.
+#
+#   ./demo            head-to-head, both systems live
+#   ./demo --prefs    belief tables only — instant, no network, no LLM
+#   ./demo --seed     re-seed travel-guardian's KV first (7-day TTL)
+#   ./demo smoke      credential checks
+#   ./demo snapshot   re-capture demo_data.json for the web UI
+
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
+PY=".venv/bin/python"
+[ -x "$PY" ] || { echo "no venv — run: python3 -m venv .venv && .venv/bin/pip install -r requirements.txt"; exit 1; }
+
+case "${1:-}" in
+  smoke)    shift; exec "$PY" scripts/smoke.py "$@" ;;
+  snapshot) shift; exec "$PY" scripts/snapshot.py "$@" ;;
+  ask)      shift; exec "$PY" -m travel_companion.agent "$@" ;;
+  ingest)   shift; exec "$PY" -m travel_companion.ingest "$@" ;;
+  *)        exec "$PY" compare.py "$@" ;;
+esac
