@@ -1,0 +1,192 @@
+{
+  "question": "I have a free day in San Francisco before the hackathon. Plan it for me.",
+  "capturedAt": "2026-09-22T02:29:00.691319+00:00",
+  "guardian": {
+    "preferences": {
+      "interests": [
+        "art",
+        "museum",
+        "history",
+        "nightlife"
+      ],
+      "mobility": [
+        "walking"
+      ],
+      "cuisine": [
+        "budget"
+      ],
+      "safety": [
+        "night"
+      ]
+    },
+    "visitedCount": 15,
+    "url": "https://travel-guardian.butterbase.dev",
+    "answer": "Good morning! Since you're in San Francisco for the hackathon at 33 New Montgomery and don't have a car, let's plan a fantastic day focused on walking and making the most of that golden hour. Remember, no museums and nothing past 9 PM.\n\nHere's a possible itinerary:\n\n*   **Morning (10:00 AM - 12:00 PM): North Beach Exploration & Coffee**\n    Start your day with a walk to North Beach, San Francisco's Little Italy. It's a vibrant neighborhood with a rich history. Grab a coffee and a pastry at a local cafe and soak in the atmosphere. You can wander through City Lights Bookstore, a famous literary landmark, or explore Washington Square Park.\n\n*   **Lunch (12:00 PM - 1:00 PM): Budget-Friendly Bites in North Beach**\n    North Beach has plenty of affordable and delicious Italian deli sandwiches or pizza by the slice options perfect for a budget-conscious meal.\n\n*   **Afternoon (1:00 PM - 4:00 PM): Walk to Coit Tower & Panoramic Views**\n    From North Beach, it's a pleasant walk up to Coit Tower. You can take the stairs if you're feeling energetic, or the paved path. The views from the top are absolutely stunning, offering panoramic vistas of the city, Alcatraz, and the Golden Gate Bridge \u2013 perfect for pre-golden hour scouting.\n\n*   **Late Afternoon / Golden Hour (4:00 PM - 7:00 PM): Stroll along the Embarcadero & Ferry Building**\n    Walk down from Coit Tower towards the Embarcadero. This waterfront promenade is beautiful, especially as the sun starts to dip. The Ferry Building Marketplace is a fantastic spot to explore, even if you're just window shopping or grabbing a small snack from one of its many artisan vendors. You'll get some incredible golden hour views of the Bay Bridge from here.\n\n*   **Dinner (7:00 PM - 8:30 PM): Casual Dinner near the Embarcadero**\n    There are several casual and budget-friendly eateries around the Ferry Building or a short walk away. You could grab some delicious tacos or a hearty bowl of clam chowder.\n\n*   **Evening (8:30 PM - 9:00 PM): Easy Walk Back**\n    As it approaches 9 PM, you can enjoy a leisurely walk back to your accommodation, enjoying the city lights.\n\nThis plan keeps you active, offers great views, and respects your evening preference for early nights. Let me know if you'd like any adjustments!"
+  },
+  "ranking": {
+    "total": 15,
+    "spanDays": 330,
+    "flat": [
+      {
+        "title": "Walk the entire city - no transit, 20k steps a day",
+        "ageDays": 330,
+        "date": "2025-10-27",
+        "kind": "decision",
+        "score": 0.913556,
+        "superseded": true,
+        "supersededBy": "knee injury, 45d ago"
+      },
+      {
+        "title": "Museum-first itineraries - anchor every day on a major museum",
+        "ageDays": 300,
+        "date": "2025-11-26",
+        "kind": "decision",
+        "score": 0.460548,
+        "superseded": true,
+        "supersededBy": "reversed 25d ago"
+      },
+      {
+        "title": "Skip ticketed attractions - they eat the whole day",
+        "ageDays": 35,
+        "date": "2026-08-18",
+        "kind": "decision",
+        "score": 0.330152,
+        "superseded": false,
+        "supersededBy": null
+      },
+      {
+        "title": "Book the marquee ticketed attractions well in advance",
+        "ageDays": 280,
+        "date": "2025-12-16",
+        "kind": "decision",
+        "score": 0.231539,
+        "superseded": true,
+        "supersededBy": "reversed 35d ago"
+      },
+      {
+        "title": "Live music is the point - build nights around late shows",
+        "ageDays": 250,
+        "date": "2026-01-15",
+        "kind": "decision",
+        "score": 0.18676,
+        "superseded": true,
+        "supersededBy": "reversed 20d ago"
+      },
+      {
+        "title": "Stop routing me through museums",
+        "ageDays": 25,
+        "date": "2026-08-28",
+        "kind": "feedback",
+        "score": 0.165529,
+        "superseded": false,
+        "supersededBy": null
+      },
+      {
+        "title": "The Pier 45 recommendation was a miss",
+        "ageDays": 95,
+        "date": "2026-06-19",
+        "kind": "feedback",
+        "score": 0.139187,
+        "superseded": false,
+        "supersededBy": null
+      },
+      {
+        "title": "In SF for a hackathon at 33 New Montgomery",
+        "ageDays": 5,
+        "date": "2026-09-17",
+        "kind": "context",
+        "score": 0.124829,
+        "superseded": false,
+        "supersededBy": null
+      }
+    ],
+    "decayed": [
+      {
+        "title": "Skip ticketed attractions - they eat the whole day",
+        "ageDays": 35,
+        "date": "2026-08-18",
+        "kind": "decision",
+        "score": 0.153142,
+        "superseded": false,
+        "supersededBy": null
+      },
+      {
+        "title": "In SF for a hackathon at 33 New Montgomery",
+        "ageDays": 5,
+        "date": "2026-09-17",
+        "kind": "context",
+        "score": 0.111855,
+        "superseded": false,
+        "supersededBy": null
+      },
+      {
+        "title": "Stop routing me through museums",
+        "ageDays": 25,
+        "date": "2026-08-28",
+        "kind": "feedback",
+        "score": 0.095626,
+        "superseded": false,
+        "supersededBy": null
+      },
+      {
+        "title": "Golden hour is the planning constraint",
+        "ageDays": 12,
+        "date": "2026-09-10",
+        "kind": "pattern",
+        "score": 0.076593,
+        "superseded": false,
+        "supersededBy": null
+      },
+      {
+        "title": "No car this trip",
+        "ageDays": 3,
+        "date": "2026-09-19",
+        "kind": "context",
+        "score": 0.071962,
+        "superseded": false,
+        "supersededBy": null
+      },
+      {
+        "title": "Early nights now - nothing scheduled past 9pm",
+        "ageDays": 20,
+        "date": "2026-09-02",
+        "kind": "decision",
+        "score": 0.071242,
+        "superseded": false,
+        "supersededBy": null
+      },
+      {
+        "title": "Batteries to Bluffs was exactly right",
+        "ageDays": 28,
+        "date": "2026-08-25",
+        "kind": "feedback",
+        "score": 0.044729,
+        "superseded": false,
+        "supersededBy": null
+      },
+      {
+        "title": "Knee injury - walking radius capped, transit-adjacent only",
+        "ageDays": 45,
+        "date": "2026-08-08",
+        "kind": "decision",
+        "score": 0.026277,
+        "superseded": false,
+        "supersededBy": null
+      }
+    ],
+    "window": 45,
+    "flatStale": 4,
+    "decayedStale": 0
+  },
+  "companion": {
+    "answer": "",
+    "toolCalls": [
+      "recall_self",
+      "recall_world",
+      "search_engine_batch",
+      "scrape_batch",
+      "search_engine",
+      "remember"
+    ]
+  }
+}
