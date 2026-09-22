@@ -89,13 +89,20 @@ def main() -> None:
 
     console.rule("[bold]2. travel-guardian (live at butterbase.dev)")
     console.print()
-    console.print(Panel(guardian.ask(QUESTION), border_style="red"))
+    console.print(Panel(guardian.ask(QUESTION), border_style="red",
+                        title="flat memory", title_align="left"))
 
     console.rule("[bold]3. Travel Companion")
-    console.print()
+    console.print(
+        "[dim]watch the tool calls: recall_self -> search_engine -> recall_world "
+        "-> scrape -> remember[/dim]\n"
+    )
+    # Strands streams the answer and its tool calls to stdout as it goes, which
+    # is the point on stage — don't wrap it in a Panel, that swallows the stream.
     with brightdata.client() as bright:
-        agent = build(bright)
-        console.print(Panel(str(agent(QUESTION)), border_style="green"))
+        build(bright)(QUESTION)
+    console.print()
+    console.rule("[green]the brain wrote back what it learned (tool: remember)")
 
 
 if __name__ == "__main__":
