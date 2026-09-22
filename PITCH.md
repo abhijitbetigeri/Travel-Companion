@@ -127,17 +127,102 @@ Scroll the demo page as you talk. One act per beat.
 
 ---
 
-# Before you present
+# Runbook
+
+## T–5 min · prep
 
 ```bash
-./demo --seed     # KV has a 7-day TTL
+cd ~/projects/Travel-Companion
+./demo --seed --prefs
 ```
 
-Open in tabs, in order:
+One command: re-seeds travel-guardian's KV (7-day TTL) **and** prints the
+belief tables so you can confirm it worked. You want to see `walking` on the
+left and `Knee injury` on the right.
 
-1. https://abhijitbetigeri.github.io/Travel-Companion/demo.html
+Open three tabs, in this order:
+
+1. https://abhijitbetigeri.github.io/Travel-Companion/demo.html — scroll to top
 2. https://travel-guardian.butterbase.dev
-3. Terminal with `./demo --prefs` ready
+3. Terminal in the repo, `./demo --prefs` typed but **not** run
 
-**If the wifi dies:** the demo page is static and already loaded, and
-`--prefs` needs no network. The argument survives intact.
+Load tab 1 fully now. Once loaded it is static — wifi can die and it still works.
+
+## The run · 3 minutes
+
+**① Tab 2 — the old app** · 15s
+Show it's a real deployed thing. Don't interact, just establish it exists.
+
+> "Three months ago I built this. It's still running. I'm going to show you
+> why its memory is broken, then fix it."
+
+**② Tab 1 — Act 1** · 35s
+Point at the left card: `art, museum, history, nightlife` / `walking`.
+
+> "Same fifteen memories, two designs. This one appends preferences forever.
+> Museums — they asked me to stop, 25 days ago. Nightlife — reversed 20 days
+> ago. Walking — they tore their knee 45 days ago."
+
+**③ Act 1, the fault box** · 20s — **the moment**
+
+> "But the knee isn't in that list at all. The memory says 'transit-adjacent'.
+> The keyword table looks for 'public transport'. Substring matching never
+> fires. The most important fact about this traveler is invisible."
+
+**Pause. Two seconds. Let them read it.**
+
+**④ Act 2** · 40s
+
+> "Supersession is a retrieval problem, not a storage problem."
+
+Point at the formula, then the scoreboard.
+
+> "Relevance times decay on age. Multiplicative — relevance picks the
+> candidates, recency decides which survive. Nothing is deleted; the old
+> memory just loses. Reversed decisions in the top eight: flat four,
+> weighted zero."
+
+**⑤ Act 3** · 50s
+Left pane, read the quote verbatim:
+
+> "'Knowing you enjoy walking… a forty-minute walk… a longer walk to the
+> Mission.' No idea about the knee."
+
+Right pane:
+
+> "Mine: 2.7 miles, transit-adjacent, no tickets, golden hour, done before
+> nine — and it cites the date of every constraint."
+
+Point at the tool-trace chips:
+
+> "Cognee for who you are. Bright Data for what's true right now. And the last
+> call is `remember` — it wrote back what the web just taught it."
+
+**⑥ Close** · 20s
+
+> "Two datasets, two lifespans. Who you are supersedes. What's true now
+> expires. The old app's still live if you want to try it."
+
+## If a judge wants proof it's real
+
+Tab 3: `./demo --prefs` — about 2 seconds, hits Cognee live, prints the same
+tables. No LLM, no slide.
+
+If they want the whole loop: `./demo` — but that's 1–2 minutes of tool calls.
+Only offer it in Q&A, and talk over it.
+
+## Failure modes
+
+| If | Then |
+|---|---|
+| Wifi dies | Tab 1 is already loaded and fully static. Keep going. |
+| `./demo --prefs` errors | Skip it. The page carries the argument alone. |
+| Asked about Bedrock | Wired, one env var. Account is new, not yet enabled — Amazon's own Nova fails identically, so it isn't permissions. |
+| Asked if guardian is a strawman | `guardian.py` is a port of the real `api.js`. Same keyword table, same `.push()`. Offer to show the file. |
+| `command not found: python` | Use `./demo`, not `python`. It handles the venv and the cwd. |
+
+## Pre-flight
+
+```bash
+./demo smoke     # expect: all 3 checks passed
+```
